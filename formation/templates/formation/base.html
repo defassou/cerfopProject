@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}CERFOP — Formation Parlementaire{% endblock %}</title>
+{% load static %}
+<link rel="stylesheet" href="{% static 'formation/css/cerfop.css' %}">
+<link rel="icon" type="image/png" href="{% static 'formation/img/logo_cnt.png' %}">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar-cerfop">
+  <a href="{% url 'accueil' %}" class="navbar-brand">
+    <img src="{% static 'formation/img/logo_cnt.png' %}" alt="Logo CNT">
+    <div class="brand-text">
+      <div class="brand-cnt">CNT — Guinée</div>
+      <div class="brand-cerfop">CERFOP</div>
+    </div>
+  </a>
+  <ul class="navbar-nav">
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'dashboard' %}" class="nav-link">🏠 Tableau de bord</a></li>
+      <li><a href="{% url 'catalogue_formations' %}" class="nav-link">📚 Formations</a></li>
+      <li>
+        <a href="{% url 'mes_notifications' %}" class="nav-link">
+          🔔
+          {% with nb=user.notifications.filter.count %}
+          {% endwith %}
+        </a>
+      </li>
+      <li><a href="{% url 'mon_profil' %}" class="nav-link">👤 {{ user.get_full_name|default:user.username }}</a></li>
+      <li><a href="{% url 'deconnexion' %}" class="nav-link" style="color:rgba(255,200,200,0.9)!important;">⏻ Déconnexion</a></li>
+    {% else %}
+      <li><a href="{% url 'catalogue_formations' %}" class="nav-link">📚 Formations</a></li>
+      <li><a href="{% url 'connexion' %}" class="nav-link btn-outline-or" style="padding:7px 16px!important;">Connexion</a></li>
+      <li><a href="{% url 'inscription' %}" class="nav-link btn-or" style="padding:7px 16px!important;">S'inscrire</a></li>
+    {% endif %}
+  </ul>
+</nav>
+
+{% if user.is_authenticated %}
+<div class="layout-wrapper">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    {% with profil=request.user.profil %}
+    {% if profil.is_formateur %}
+    <div class="sidebar-label">Formateur</div>
+    <a href="{% url 'dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <span class="icon">🏠</span> Tableau de bord
+    </a>
+    <a href="{% url 'mes_formations' %}" class="sidebar-link {% if 'formation' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">📋</span> Mes formations
+    </a>
+    <a href="{% url 'creer_formation' %}" class="sidebar-link">
+      <span class="icon">➕</span> Nouvelle formation
+    </a>
+    <hr class="sidebar-divider">
+    <div class="sidebar-label">Candidats</div>
+    <a href="{% url 'catalogue_formations' %}" class="sidebar-link">
+      <span class="icon">👥</span> Voir catalogue
+    </a>
+    {% else %}
+    <div class="sidebar-label">Candidat</div>
+    <a href="{% url 'dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <span class="icon">🏠</span> Mon espace
+    </a>
+    <a href="{% url 'catalogue_formations' %}" class="sidebar-link">
+      <span class="icon">📚</span> Catalogue
+    </a>
+    <hr class="sidebar-divider">
+    <div class="sidebar-label">Mes formations</div>
+    {% for insc in request.user.inscriptions.all|slice:":5" %}
+    <a href="{% url 'suivre_formation' insc.formation.pk %}" class="sidebar-link">
+      <span class="icon">📖</span> {{ insc.formation.titre|truncatechars:22 }}
+    </a>
+    {% endfor %}
+    {% endif %}
+    <hr class="sidebar-divider">
+    <div class="sidebar-label">Compte</div>
+    <a href="{% url 'mon_profil' %}" class="sidebar-link">
+      <span class="icon">👤</span> Mon profil
+    </a>
+    <a href="{% url 'mes_notifications' %}" class="sidebar-link">
+      <span class="icon">🔔</span> Notifications
+    </a>
+    <a href="{% url 'deconnexion' %}" class="sidebar-link" style="color:rgba(255,150,150,.8);">
+      <span class="icon">⏻</span> Déconnexion
+    </a>
+    {% endwith %}
+  </aside>
+
+  <main class="main-content">
+    <!-- MESSAGES -->
+    {% for msg in messages %}
+    <div class="alert-cerfop alert-{{ msg.tags }} fade-in">
+      {% if msg.tags == 'success' %}✅{% elif msg.tags == 'error' or msg.tags == 'danger' %}❌{% elif msg.tags == 'warning' %}⚠️{% else %}ℹ️{% endif %}
+      {{ msg }}
+    </div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% else %}
+<main style="padding:2rem;">
+  {% for msg in messages %}
+  <div class="alert-cerfop alert-{{ msg.tags }} fade-in">{{ msg }}</div>
+  {% endfor %}
+  {% block content_public %}{% endblock %}
+</main>
+{% endif %}
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

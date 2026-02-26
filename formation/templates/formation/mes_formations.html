@@ -1,0 +1,42 @@
+{% extends 'formation/base.html' %}
+{% block title %}Mes formations — CERFOP{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <h1>📋 Mes formations</h1>
+  <p>Gérez toutes vos formations parlementaires.</p>
+  <div class="header-icon">📚</div>
+</div>
+<div style="margin-bottom:1rem;display:flex;justify-content:flex-end;">
+  <a href="{% url 'creer_formation' %}" class="btn-or">➕ Nouvelle formation</a>
+</div>
+{% if formations %}
+<div class="row fade-in">
+  {% for f in formations %}
+  <div class="col-4">
+    <div class="formation-card">
+      <div class="formation-card-img">
+        {% if f.image %}<img src="{{ f.image.url }}" alt="{{ f.titre }}">
+        {% else %}<div class="emoji">🏛️</div>{% endif %}
+      </div>
+      <div class="formation-card-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;">
+          <span class="badge-statut badge-{{ f.statut }}">{{ f.get_statut_display }}</span>
+          <small style="color:var(--gris);font-size:.75rem;">{{ f.nb_inscrits_count }} inscrits</small>
+        </div>
+        <div class="formation-card-titre">{{ f.titre }}</div>
+        <p style="font-size:.82rem;color:var(--gris);margin:.5rem 0 .75rem;flex:1;">{{ f.description|truncatewords:15 }}</p>
+        <div class="formation-card-meta">📅 {{ f.date_debut|date:"d/m/Y" }} — {{ f.date_fin|date:"d/m/Y" }}<br>📦 {{ f.nb_modules }} modules · {{ f.nb_cours }} cours</div>
+        <div style="display:flex;gap:6px;margin-top:1rem;">
+          <a href="{% url 'gerer_formation' f.pk %}" class="btn-bleu" style="padding:6px 12px;font-size:.82rem;flex:1;justify-content:center;">⚙️ Gérer</a>
+          <a href="{% url 'suivi_candidats' f.pk %}" class="btn-outline-or" style="padding:6px 12px;font-size:.82rem;">👥</a>
+          <a href="{% url 'supprimer_formation' f.pk %}" class="btn-danger-soft" style="padding:6px 12px;">🗑️</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card-cerfop fade-in"><div class="card-body" style="text-align:center;padding:3rem;"><div style="font-size:4rem;">📭</div><p style="margin:.75rem 0;">Aucune formation créée.</p><a href="{% url 'creer_formation' %}" class="btn-or">➕ Créer ma première formation</a></div></div>
+{% endif %}
+{% endblock %}

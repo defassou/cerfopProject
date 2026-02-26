@@ -1,0 +1,26 @@
+{% extends 'formation/base.html' %}
+{% block title %}Gérer — {{ quiz.titre }}{% endblock %}
+{% block content %}
+<div class="page-header fade-in"><h1>📝 {{ quiz.titre }}</h1><p>{{ quiz.module.titre }} · {{ questions.count }} questions</p></div>
+<div style="margin-bottom:1rem;"><a href="{% url 'ajouter_question' quiz.pk %}" class="btn-or">➕ Ajouter une question</a></div>
+{% for question in questions %}
+<div class="quiz-question-card fade-in">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+    <div style="flex:1;">
+      <div class="question-number">Q{{ forloop.counter }} · {{ question.get_type_question_display }} · {{ question.points }} pt(s)</div>
+      <div class="question-texte">{{ question.texte }}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:.5rem;">
+        {% for choix in question.choix.all %}
+        <span style="padding:3px 10px;border-radius:20px;font-size:.78rem;{% if choix.est_correct %}background:rgba(39,174,96,.12);color:var(--vert);border:1px solid rgba(39,174,96,.3);{% else %}background:var(--gris-clair);color:var(--gris);border:1px solid var(--gris-bord);{% endif %}">
+          {% if choix.est_correct %}✓{% else %}○{% endif %} {{ choix.texte }}
+        </span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="card-cerfop fade-in"><div class="card-body" style="text-align:center;padding:2rem;"><p>Aucune question. <a href="{% url 'ajouter_question' quiz.pk %}" style="color:var(--or);">Ajouter la première question →</a></p></div></div>
+{% endfor %}
+<div style="margin-top:1rem;"><a href="{% url 'gerer_formation' quiz.module.formation.pk %}" class="btn-bleu">← Retour à la formation</a></div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'formation/base.html' %}
+{% block title %}Créer un quiz{% endblock %}
+{% block content %}
+<div class="page-header fade-in"><h1>📝 Créer un quiz</h1><p>{{ module.titre }}</p></div>
+<div class="card-cerfop fade-in" style="max-width:600px;">
+  <div class="card-header">📝 Paramètres du quiz</div>
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group"><label>Titre *</label>{{ form.titre }}</div>
+      <div class="form-group"><label>Description</label>{{ form.description }}</div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Durée (minutes)</label>{{ form.duree_minutes }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Tentatives max</label>{{ form.nb_tentatives }}</div></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button type="submit" class="btn-or">✅ Créer le quiz</button>
+        <a href="{% url 'gerer_formation' module.formation.pk %}" class="btn-bleu">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

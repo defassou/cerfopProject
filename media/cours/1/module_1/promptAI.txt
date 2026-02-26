@@ -1,0 +1,10 @@
+ donne moi une django de gestion des rendez-vous d'un patient avec son docteur;
+mon projet s'appelle sante et application s'appelle carnet
+
+---------------------------------------------Donne moi une application django de formation en ligne, 
+mon projet s'appelle cerfop et l'application est formation.
+Le formateur peut téléverser ses cours ou livre en des formats pdf, word, powerpoint 
+et suivre chaque étape de la formation atteinte par les candidats et les octroyer des attestations à al fin du cycle de la formation.
+les candidats se connecte à leurs profil et suivre la formation et se faire evaluer au fur et à mesure.
+ ensuite le candidat imprime son attestation. Linstitution s'appelle CNT(Conseil National de la Transition) et 
+la direction s'appelle CERFOP(Centre d'études de recherche et de la formation parlementaire). Voici le logo

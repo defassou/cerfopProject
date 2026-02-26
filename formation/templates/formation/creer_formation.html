@@ -1,0 +1,31 @@
+{% extends 'formation/base.html' %}
+{% block title %}Nouvelle formation — CERFOP{% endblock %}
+{% block content %}
+<div class="page-header fade-in"><h1>➕ Créer une formation</h1><p>Renseignez les informations de votre nouvelle formation.</p></div>
+<div class="card-cerfop fade-in">
+  <div class="card-header">📋 Informations de la formation</div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group"><label>Titre *</label>{{ form.titre }}{% if form.titre.errors %}<small style="color:var(--rouge);">{{ form.titre.errors.0 }}</small>{% endif %}</div>
+      <div class="form-group"><label>Description *</label>{{ form.description }}</div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Date de début</label>{{ form.date_debut }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Date de fin</label>{{ form.date_fin }}</div></div>
+      </div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Durée (heures)</label>{{ form.duree_heures }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Note minimale (%)</label>{{ form.note_passage }}</div></div>
+      </div>
+      <div class="form-group"><label>Statut</label>{{ form.statut }}</div>
+      <div class="form-group"><label>Objectifs pédagogiques</label>{{ form.objectifs }}</div>
+      <div class="form-group"><label>Public cible</label>{{ form.public_cible }}</div>
+      <div class="form-group"><label>Image de couverture</label>{{ form.image }}</div>
+      <div style="display:flex;gap:8px;margin-top:1rem;">
+        <button type="submit" class="btn-or">✅ Créer la formation</button>
+        <a href="{% url 'mes_formations' %}" class="btn-bleu">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

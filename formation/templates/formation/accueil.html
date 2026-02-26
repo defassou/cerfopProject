@@ -1,0 +1,70 @@
+{% extends 'formation/base.html' %}
+{% load static %}
+{% block title %}CERFOP — Formation Parlementaire CNT Guinée{% endblock %}
+{% block content_public %}
+<!-- HERO -->
+<div style="background:linear-gradient(135deg,var(--bleu-nuit) 0%,var(--bleu-marine) 60%,var(--bleu-moyen) 100%);color:#fff;padding:5rem 2rem;text-align:center;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background:url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C9A227' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/svg%3E\");"></div>
+  <div style="position:relative;z-index:1;max-width:700px;margin:0 auto;">
+    <img src="{% static 'formation/img/logo_cnt.png' %}" alt="CNT" style="height:90px;margin-bottom:1.5rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3));">
+    <p style="font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--or-clair);margin-bottom:.5rem;">Conseil National de la Transition — République de Guinée</p>
+    <h1 style="font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;line-height:1.2;margin-bottom:1rem;">Centre d'Études, de Recherche<br>et de Formation Parlementaire</h1>
+    <p style="font-size:1.1rem;opacity:.85;margin-bottom:2rem;line-height:1.7;">Plateforme de formation en ligne dédiée au renforcement des capacités<br>des acteurs parlementaires de Guinée.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href="{% url 'inscription' %}" class="btn-or" style="padding:14px 32px;font-size:1rem;">🎓 Commencer ma formation</a>
+      <a href="{% url 'catalogue_formations' %}" class="btn-outline-or" style="padding:14px 32px;font-size:1rem;border-color:rgba(255,255,255,.5);color:#fff!important;">📚 Voir le catalogue</a>
+    </div>
+  </div>
+</div>
+<!-- FEATURES -->
+<div style="padding:4rem 2rem;max-width:1100px;margin:0 auto;">
+  <h2 style="font-family:'Playfair Display',serif;text-align:center;color:var(--bleu-nuit);font-size:1.8rem;margin-bottom:.5rem;">Une plateforme complète</h2>
+  <p style="text-align:center;color:var(--gris);margin-bottom:3rem;">Tout ce dont vous avez besoin pour former et vous former.</p>
+  <div class="row">
+    {% for feat in features %}
+    <div class="col-4">
+      <div class="stat-card {{ feat.color }}">
+        <div class="stat-icon">{{ feat.icon }}</div>
+        <div style="font-weight:700;color:var(--bleu-nuit);">
+          {{ feat.title }}
+        </div>
+        <div style="color:var(--gris);font-size:.85rem;margin-top:.25rem;">
+          {{ feat.desc }}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="col-4"><div class="stat-card or"><div class="stat-icon">📄</div><div style="font-weight:700;color:var(--bleu-nuit);">Supports variés</div><div style="color:var(--gris);font-size:.85rem;margin-top:.25rem;">PDF, Word, PowerPoint, vidéos</div></div></div>
+    <div class="col-4"><div class="stat-card bleu"><div class="stat-icon">📝</div><div style="font-weight:700;color:var(--bleu-nuit);">Quiz d'évaluation</div><div style="color:var(--gris);font-size:.85rem;margin-top:.25rem;">Évaluez vos connaissances à chaque étape</div></div></div>
+    <div class="col-4"><div class="stat-card vert"><div class="stat-icon">🏅</div><div style="font-weight:700;color:var(--bleu-nuit);">Attestations officielles</div><div style="color:var(--gris);font-size:.85rem;margin-top:.25rem;">Imprimez votre attestation CNT/CERFOP</div></div></div>
+  </div>
+</div>
+{% if formations %}
+<div style="padding:0 2rem 4rem;max-width:1100px;margin:0 auto;">
+  <h2 style="font-family:'Playfair Display',serif;color:var(--bleu-nuit);font-size:1.8rem;margin-bottom:.5rem;">Formations disponibles</h2>
+  <p style="color:var(--gris);margin-bottom:2rem;">Inscrivez-vous pour accéder à toutes les ressources.</p>
+  <div class="row">
+    {% for f in formations %}
+    <div class="col-4">
+      <div class="formation-card fade-in">
+        <div class="formation-card-img"><div class="emoji">🏛️</div></div>
+        <div class="formation-card-body">
+          <div class="formation-card-titre">{{ f.titre }}</div>
+          <p style="font-size:.82rem;color:var(--gris);margin:.5rem 0 .75rem;flex:1;">{{ f.description|truncatewords:18 }}</p>
+          <div class="formation-card-meta">📅 {{ f.date_debut|date:"d/m/Y" }} · ⏱ {{ f.duree_heures }}h · 👥 {{ f.nb_inscrits }} inscrits</div>
+          <a href="{% url 'detail_formation' f.pk %}" class="btn-bleu" style="margin-top:1rem;width:100%;justify-content:center;padding:8px;">Découvrir →</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+<!-- FOOTER -->
+<div style="background:var(--bleu-nuit);color:rgba(255,255,255,.7);padding:2rem;text-align:center;font-size:.82rem;">
+  <img src="{% static 'formation/img/logo_cnt.png' %}" alt="CNT" style="height:35px;margin-bottom:.75rem;opacity:.8;"><br>
+  <strong style="color:var(--or);">CERFOP</strong> — Centre d'Études, de Recherche et de Formation Parlementaire<br>
+  Conseil National de la Transition — République de Guinée<br>
+  <span style="opacity:.5;font-size:.75rem;">© {{ "now"|date:"Y" }} CNT/CERFOP. Tous droits réservés.</span>
+</div>
+{% endblock %}

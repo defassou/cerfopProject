@@ -1,0 +1,35 @@
+{% extends 'formation/base.html' %}
+{% block title %}Ajouter une question{% endblock %}
+{% block content %}
+<div class="page-header fade-in"><h1>❓ Ajouter une question</h1><p>{{ quiz.titre }}</p></div>
+<div class="card-cerfop fade-in">
+  <div class="card-header">❓ Question & réponses</div>
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group"><label>Texte de la question *</label>{{ q_form.texte }}</div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Type</label>{{ q_form.type_question }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Points</label>{{ q_form.points }}</div></div>
+      </div>
+      <hr class="divider-or">
+      <h5 style="font-family:'Playfair Display',serif;margin-bottom:1rem;color:var(--bleu-marine);">Choix de réponses</h5>
+      <p style="font-size:.83rem;color:var(--gris);margin-bottom:1rem;">Cochez la case pour marquer une réponse comme correcte.</p>
+      {% for i in "0123" %}
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:.75rem;padding:10px;background:var(--gris-clair);border-radius:8px;">
+        <span style="min-width:20px;font-weight:700;color:var(--bleu-marine);">{{ forloop.counter }}.</span>
+        <input type="text" name="choix_texte" placeholder="Texte du choix {{ forloop.counter }}" class="form-control">
+        <label style="display:flex;align-items:center;gap:6px;min-width:100px;color:var(--vert);font-size:.85rem;cursor:pointer;">
+          <input type="checkbox" name="choix_correct" value="{{ forloop.counter0 }}" style="accent-color:var(--vert);width:16px;height:16px;">
+          Correct
+        </label>
+      </div>
+      {% endfor %}
+      <div style="display:flex;gap:8px;margin-top:1rem;">
+        <button type="submit" class="btn-or">➕ Ajouter la question</button>
+        <a href="{% url 'gerer_quiz' quiz.pk %}" class="btn-bleu">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

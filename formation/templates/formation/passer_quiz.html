@@ -1,0 +1,33 @@
+{% extends 'formation/base.html' %}
+{% block title %}Quiz : {{ quiz.titre }}{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <h1>📝 {{ quiz.titre }}</h1>
+  <p>{{ quiz.module.titre }} · {{ quiz.questions.count }} questions · {{ quiz.duree_minutes }} minutes</p>
+</div>
+<form method="post">
+  {% csrf_token %}
+  {% for question in questions %}
+  <div class="quiz-question-card fade-in">
+    <div class="question-number">Question {{ forloop.counter }} / {{ questions.count }} — {{ question.points }} point(s)</div>
+    <div class="question-texte">{{ question.texte }}</div>
+    {% if question.type_question == 'qcm' or question.type_question == 'vrai_faux' %}
+      {% for choix in question.choix.all %}
+      <label class="choix-label">
+        <input type="radio" name="question_{{ question.pk }}" value="{{ choix.pk }}" style="accent-color:var(--or);width:18px;height:18px;">
+        <span>{{ choix.texte }}</span>
+      </label>
+      {% endfor %}
+    {% else %}
+    <textarea name="texte_{{ question.pk }}" class="form-control" rows="3" placeholder="Votre réponse..."></textarea>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div style="text-align:center;margin-top:1rem;">
+    <button type="submit" class="btn-or" style="padding:12px 40px;font-size:1rem;" onclick="return confirm('Soumettre le quiz ? Vous ne pourrez plus modifier vos réponses.')">
+      ✅ Soumettre le quiz
+    </button>
+    <p style="margin-top:.75rem;"><a href="{% url 'suivre_formation' inscription.formation.pk %}" style="color:var(--gris);font-size:.85rem;">← Annuler</a></p>
+  </div>
+</form>
+{% endblock %}

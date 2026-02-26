@@ -1,0 +1,63 @@
+{% extends 'formation/base.html' %}
+{% block title %}{{ cours.titre }} — CERFOP{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <span style="font-size:1.5rem;">{{ cours.get_icon }}</span>
+  <h1 style="margin-top:.25rem;">{{ cours.titre }}</h1>
+  <p>{{ cours.module.titre }} · {{ formation.titre }}</p>
+</div>
+<div class="row fade-in">
+  <div class="col-8">
+    <div class="card-cerfop">
+      <div class="card-header">{{ cours.get_icon }} {{ cours.titre }}</div>
+      <div class="card-body">
+        {% if cours.description %}<p style="color:var(--gris);margin-bottom:1rem;">{{ cours.description }}</p>{% endif %}
+        {% if cours.fichier %}
+        {% if cours.type_fichier == 'pdf' %}
+        <div style="border-radius:10px;overflow:hidden;box-shadow:var(--ombre);">
+          <iframe src="{{ cours.fichier.url }}" width="100%" height="600px" style="border:none;"></iframe>
+        </div>
+        <div style="margin-top:1rem;text-align:center;">
+          <a href="{{ cours.fichier.url }}" download class="btn-or">⬇️ Télécharger le PDF</a>
+        </div>
+        {% elif cours.type_fichier == 'word' or cours.type_fichier == 'powerpoint' %}
+        <div style="text-align:center;padding:2rem;background:var(--gris-clair);border-radius:var(--rayon);">
+          <div style="font-size:4rem;">{{ cours.get_icon }}</div>
+          <h4 style="font-family:'Playfair Display',serif;margin:.75rem 0;">{{ cours.titre }}</h4>
+          <p style="color:var(--gris);margin-bottom:1.5rem;">Fichier {{ cours.get_type_fichier_display }} — {{ cours.taille_fichier }}</p>
+          <a href="{{ cours.fichier.url }}" download class="btn-or">⬇️ Télécharger le fichier</a>
+        </div>
+        {% elif cours.type_fichier == 'video' %}
+        <video controls style="width:100%;border-radius:10px;">
+          <source src="{{ cours.fichier.url }}">
+        </video>
+        {% endif %}
+        {% endif %}
+        {% if cours.contenu_texte %}
+        <div style="background:var(--gris-clair);border-radius:var(--rayon);padding:1.5rem;margin-top:1rem;line-height:1.8;">
+          {{ cours.contenu_texte|linebreaks }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="card-cerfop">
+      <div class="card-header">📊 Progression</div>
+      <div class="card-body">
+        {% if progres.termine %}
+        <div style="text-align:center;color:var(--vert);font-size:2rem;margin-bottom:.5rem;">✅</div>
+        <p style="text-align:center;font-weight:700;color:var(--vert);">Cours terminé !</p>
+        <p style="text-align:center;font-size:.82rem;color:var(--gris);">{{ progres.date_fin|date:"d/m/Y H:i" }}</p>
+        {% endif %}
+        <hr class="divider-or">
+        <p style="font-size:.85rem;color:var(--gris);">Formation : <strong>{{ inscription.progression }}%</strong></p>
+        <div class="progress-cerfop"><div class="progress-bar-cerfop" style="width:{{ inscription.progression }}%"></div></div>
+        <div style="margin-top:1rem;">
+          <a href="{% url 'suivre_formation' formation.pk %}" class="btn-bleu w-100" style="justify-content:center;">← Retour à la formation</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

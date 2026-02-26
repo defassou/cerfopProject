@@ -1,0 +1,30 @@
+{% extends 'formation/base.html' %}
+{% block title %}{% if edit %}Modifier{% else %}Ajouter{% endif %} un cours{% endblock %}
+{% block content %}
+<div class="page-header fade-in"><h1>📎 {% if edit %}Modifier{% else %}Ajouter{% endif %} un cours</h1><p>{{ module.titre }} — {{ module.formation.titre }}</p></div>
+<div class="card-cerfop fade-in" style="max-width:700px;">
+  <div class="card-header">📎 Ressource pédagogique</div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group"><label>Titre *</label>{{ form.titre }}</div>
+      <div class="form-group"><label>Description</label>{{ form.description }}</div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Type de fichier</label>{{ form.type_fichier }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Durée estimée (min)</label>{{ form.duree_minutes }}</div></div>
+      </div>
+      <div class="form-group">
+        <label>📎 Fichier (PDF, Word, PowerPoint, Vidéo)</label>
+        {{ form.fichier }}
+        <small style="color:var(--gris);font-size:.78rem;">Formats acceptés : .pdf, .docx, .pptx, .mp4 — Max 100 Mo</small>
+      </div>
+      <div class="form-group"><label>Contenu texte (optionnel)</label>{{ form.contenu_texte }}<small style="color:var(--gris);font-size:.78rem;">Utilisez ce champ si vous souhaitez ajouter du contenu textuel.</small></div>
+      <div class="form-group"><label>Ordre</label>{{ form.ordre }}</div>
+      <div style="display:flex;gap:8px;">
+        <button type="submit" class="btn-or">{% if edit %}💾 Sauvegarder{% else %}📎 Ajouter le cours{% endif %}</button>
+        <a href="{% url 'gerer_formation' module.formation.pk %}" class="btn-bleu">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

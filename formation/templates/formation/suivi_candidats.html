@@ -1,0 +1,68 @@
+{% extends 'formation/base.html' %}
+{% block title %}Suivi — {{ formation.titre }}{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <h1>👥 Suivi des candidats</h1>
+  <p>{{ formation.titre }} · {{ inscriptions.count }} candidat(s) inscrit(s)</p>
+</div>
+<div class="card-cerfop fade-in">
+  <div class="card-header">📊 Progression des candidats</div>
+  <div class="card-body" style="padding:0;">
+    {% if inscriptions %}
+    <table class="table-cerfop">
+      <thead><tr><th>Candidat</th><th>Organisation</th><th>Progression</th><th>Moyenne Quiz</th><th>Éligible</th><th>Attestation</th></tr></thead>
+      <tbody>
+        {% for insc in inscriptions %}
+        <tr>
+          <td>
+            <strong>{{ insc.candidat.get_full_name }}</strong>
+            <br><small style="color:var(--gris);">{{ insc.candidat.email }}</small>
+          </td>
+          <td style="font-size:.82rem;">
+            {% with p=insc.candidat.profil %}
+            {{ p.organisation|default:"—" }}<br>
+            <small style="color:var(--gris);">{{ p.poste|default:"" }}</small>
+            {% endwith %}
+          </td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;min-width:150px;">
+              <div class="progress-cerfop" style="flex:1;"><div class="progress-bar-cerfop" style="width:{{ insc.progression }}%"></div></div>
+              <span style="font-size:.82rem;font-weight:700;min-width:38px;">{{ insc.progression }}%</span>
+            </div>
+          </td>
+          <td>
+            {% with moy=insc.get_moyenne %}
+            {% if moy %}
+              <span style="font-weight:700;color:{% if moy >= formation.note_passage %}var(--vert){% else %}var(--rouge){% endif %}">{{ moy }}%</span>
+            {% else %}—{% endif %}
+            {% endwith %}
+          </td>
+          <td>
+            {% if insc.peut_obtenir_attestation %}
+            <span style="color:var(--vert);font-weight:700;">✅ Oui</span>
+            {% else %}
+            <span style="color:var(--rouge);">❌ Non</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if insc.attestation_accordee %}
+            <span style="color:var(--vert);font-weight:700;font-size:.85rem;">🏅 Accordée</span><br>
+            <small style="color:var(--gris);font-size:.75rem;">{{ insc.date_attestation|date:"d/m/Y" }}</small>
+            {% else %}
+            <a href="{% url 'accorder_attestation' insc.pk %}" class="btn-or" style="padding:5px 12px;font-size:.78rem;" onclick="return confirm('Accorder l\'attestation à {{ insc.candidat.get_full_name }} ?')">🏅 Accorder</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="padding:2.5rem;text-align:center;color:var(--gris);">
+      <div style="font-size:3rem;">👤</div>
+      <p style="margin-top:.75rem;">Aucun candidat inscrit pour l'instant.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+<div style="margin-top:1rem;"><a href="{% url 'gerer_formation' formation.pk %}" class="btn-bleu">← Retour à la gestion</a></div>
+{% endblock %}

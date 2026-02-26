@@ -1,0 +1,89 @@
+{% extends 'formation/base.html' %}
+{% load static %}
+{% block title %}{{ formation.titre }} — CERFOP{% endblock %}
+{% block content %}
+{% block content_public %}
+<div class="page-header fade-in">
+  <h1>{{ formation.titre }}</h1>
+  <p>{{ formation.formateur.get_full_name }} · {{ formation.duree_heures }}h · {{ formation.nb_modules }} modules</p>
+  <div class="header-icon">🏛️</div>
+</div>
+<div class="row fade-in">
+  <div class="col-8">
+    <div class="card-cerfop">
+      <div class="card-header">📄 Description de la formation</div>
+      <div class="card-body">
+        <p style="line-height:1.7;color:var(--bleu-nuit);">{{ formation.description }}</p>
+        {% if formation.objectifs %}
+        <hr class="divider-or">
+        <h5 style="font-family:'Playfair Display',serif;color:var(--bleu-marine);margin-bottom:.75rem;">🎯 Objectifs pédagogiques</h5>
+        <p style="line-height:1.7;">{{ formation.objectifs }}</p>
+        {% endif %}
+        {% if formation.public_cible %}
+        <hr class="divider-or">
+        <h5 style="font-family:'Playfair Display',serif;color:var(--bleu-marine);margin-bottom:.75rem;">👤 Public cible</h5>
+        <p>{{ formation.public_cible }}</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card-cerfop">
+      <div class="card-header">📦 Contenu de la formation</div>
+      <div class="card-body" style="padding:.75rem;">
+        {% for module in modules %}
+        <div class="module-item">
+          <div class="module-header">
+            <h6>Module {{ module.ordre }} : {{ module.titre }}</h6>
+            <span style="font-size:.8rem;opacity:.8;">{{ module.cours.count }} cours · {{ module.quiz.count }} quiz</span>
+          </div>
+          <div class="module-body">
+            {% if module.description %}<p style="font-size:.85rem;color:var(--gris);margin-bottom:.75rem;">{{ module.description }}</p>{% endif %}
+            {% for cours in module.cours.all %}
+            <div class="cours-item">
+              <span class="cours-icon">{{ cours.get_icon }}</span>
+              <div>
+                <div class="cours-titre">{{ cours.titre }}</div>
+                <div class="cours-meta">{{ cours.get_type_fichier_display }} · {{ cours.duree_minutes }} min</div>
+              </div>
+            </div>
+            {% endfor %}
+            {% for quiz in module.quiz.all %}
+            <div class="cours-item" style="background:rgba(74,124,201,.04);">
+              <span class="cours-icon">📝</span>
+              <div><div class="cours-titre">Quiz : {{ quiz.titre }}</div>
+              <div class="cours-meta">{{ quiz.duree_minutes }} min · {{ quiz.nb_tentatives }} tentatives max</div></div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="card-cerfop">
+      <div class="card-header">ℹ️ Informations</div>
+      <div class="card-body">
+        <div style="margin-bottom:.75rem;"><span style="color:var(--gris);font-size:.82rem;">📅 Début</span><br><strong>{{ formation.date_debut|date:"d F Y" }}</strong></div>
+        <div style="margin-bottom:.75rem;"><span style="color:var(--gris);font-size:.82rem;">📅 Fin</span><br><strong>{{ formation.date_fin|date:"d F Y" }}</strong></div>
+        <div style="margin-bottom:.75rem;"><span style="color:var(--gris);font-size:.82rem;">⏱ Durée</span><br><strong>{{ formation.duree_heures }} heures</strong></div>
+        <div style="margin-bottom:.75rem;"><span style="color:var(--gris);font-size:.82rem;">📦 Modules</span><br><strong>{{ formation.nb_modules }}</strong></div>
+        <div style="margin-bottom:.75rem;"><span style="color:var(--gris);font-size:.82rem;">👥 Inscrits</span><br><strong>{{ formation.nb_inscrits }}</strong></div>
+        <div style="margin-bottom:1rem;"><span style="color:var(--gris);font-size:.82rem;">🎓 Note passage</span><br><strong>{{ formation.note_passage }}%</strong></div>
+        <hr class="divider-or">
+        {% if user.is_authenticated %}
+          {% if inscription %}
+          <a href="{% url 'suivre_formation' formation.pk %}" class="btn-or w-100" style="justify-content:center;">▶ Continuer la formation</a>
+          <p style="text-align:center;font-size:.8rem;color:var(--vert);margin-top:.5rem;">✅ Vous êtes inscrit(e)</p>
+          {% elif profil.is_formateur %}
+          <p style="text-align:center;font-size:.85rem;color:var(--gris);">Vous êtes formateur.</p>
+          {% else %}
+          <a href="{% url 'sinscrire_formation' formation.pk %}" class="btn-or w-100" style="justify-content:center;">✅ S'inscrire à cette formation</a>
+          {% endif %}
+        {% else %}
+        <a href="{% url 'connexion' %}" class="btn-or w-100" style="justify-content:center;">🔐 Se connecter pour s'inscrire</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'formation/base.html' %}
+{% block title %}Confirmer la suppression{% endblock %}
+{% block content %}
+<div class="card-cerfop fade-in" style="max-width:500px;margin:2rem auto;">
+  <div class="card-header" style="background:linear-gradient(90deg,var(--rouge),#e74c3c);">🗑️ Confirmer la suppression</div>
+  <div class="card-body" style="text-align:center;padding:2rem;">
+    <div style="font-size:3rem;margin-bottom:1rem;">⚠️</div>
+    <p style="font-size:1rem;color:var(--bleu-nuit);margin-bottom:.5rem;">Supprimer ce {{ type }} ?</p>
+    <p style="font-weight:700;font-size:1.1rem;color:var(--rouge);margin-bottom:1.5rem;">« {{ objet }} »</p>
+    <p style="font-size:.85rem;color:var(--gris);">Cette action est irréversible et supprimera tout le contenu associé.</p>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:1.5rem;">
+      <form method="post" style="display:inline;">{% csrf_token %}<button type="submit" style="background:var(--rouge);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-weight:700;cursor:pointer;">🗑️ Oui, supprimer</button></form>
+      <a href="javascript:history.back()" class="btn-bleu">Annuler</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

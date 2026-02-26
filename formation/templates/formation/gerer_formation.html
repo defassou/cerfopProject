@@ -1,0 +1,98 @@
+{% extends 'formation/base.html' %}
+{% block title %}Gérer — {{ formation.titre }}{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <h1>⚙️ {{ formation.titre }}</h1>
+  <p>Gérez les modules, cours et quiz de cette formation.</p>
+</div>
+<div class="d-flex" style="gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;" class="fade-in no-print">
+  <a href="{% url 'modifier_formation' formation.pk %}" class="btn-bleu">✏️ Modifier la formation</a>
+  <a href="{% url 'ajouter_module' formation.pk %}" class="btn-or">➕ Ajouter un module</a>
+  <a href="{% url 'suivi_candidats' formation.pk %}" class="btn-outline-or">👥 Suivi candidats ({{ formation.nb_inscrits }})</a>
+  <span class="badge-statut badge-{{ formation.statut }}" style="align-self:center;margin-left:auto;">{{ formation.get_statut_display }}</span>
+</div>
+{% for module in modules %}
+<div class="module-item fade-in">
+  <div class="module-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display=='none'?'block':'none'">
+    <div>
+      <h6>📦 Module {{ module.ordre }} : {{ module.titre }}</h6>
+      {% if module.description %}<small style="opacity:.7;font-size:.8rem;">{{ module.description|truncatewords:12 }}</small>{% endif %}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span style="font-size:.8rem;opacity:.8;">{{ module.cours.count }} cours · {{ module.quiz.count }} quiz</span>
+      <a href="{% url 'modifier_module' module.pk %}" class="btn-sm-icon" style="background:rgba(255,255,255,.15);color:#fff;padding:4px 10px;border-radius:6px;font-size:.8rem;">✏️</a>
+      <a href="{% url 'supprimer_module' module.pk %}" class="btn-sm-icon" style="background:rgba(255,100,100,.2);color:#ffaaaa;padding:4px 10px;border-radius:6px;font-size:.8rem;" onclick="return confirm('Supprimer ce module ?')">🗑️</a>
+      <span style="font-size:1rem;">▾</span>
+    </div>
+  </div>
+  <div class="module-body">
+    {% for cours in module.cours.all %}
+    <div class="cours-item">
+      <span class="cours-icon">{{ cours.get_icon }}</span>
+      <div style="flex:1;">
+        <div class="cours-titre">{{ cours.titre }}</div>
+        <div class="cours-meta">{{ cours.get_type_fichier_display }} · {{ cours.taille_fichier }} · {{ cours.duree_minutes }}min</div>
+      </div>
+      <a href="{% url 'modifier_cours' cours.pk %}" class="btn-sm-icon btn-bleu" style="padding:5px 10px;font-size:.78rem;">✏️</a>
+      <a href="{% url 'supprimer_cours' cours.pk %}" class="btn-sm-icon btn-danger-soft" style="margin-left:4px;" onclick="return confirm('Supprimer ce cours ?')">🗑️</a>
+    </div>
+    {% endfor %}
+    {% for quiz in module.quiz.all %}
+    <div class="cours-item" style="background:rgba(74,124,201,.04);border-color:rgba(74,124,201,.2);">
+      <span class="cours-icon">📝</span>
+      <div style="flex:1;">
+        <div class="cours-titre">Quiz : {{ quiz.titre }}</div>
+        <div class="cours-meta">{{ quiz.questions.count }} questions · {{ quiz.duree_minutes }}min · {{ quiz.nb_tentatives }} tentatives max</div>
+      </div>
+      <a href="{% url 'gerer_quiz' quiz.pk %}" class="btn-sm-icon btn-bleu" style="padding:5px 10px;font-size:.78rem;">⚙️ Gérer</a>
+    </div>
+    {% endfor %}
+    <div style="display:flex;gap:8px;margin-top:.75rem;padding-top:.75rem;border-top:1px dashed var(--gris-bord);">
+      <a href="{% url 'ajouter_cours' module.pk %}" class="btn-outline-or" style="padding:6px 14px;font-size:.82rem;">📎 Ajouter un cours</a>
+      <a href="{% url 'ajouter_quiz' module.pk %}" class="btn-outline-or" style="padding:6px 14px;font-size:.82rem;">📝 Ajouter un quiz</a>
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="card-cerfop fade-in">
+  <div class="card-body" style="text-align:center;padding:2.5rem;">
+    <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
+    <p>Aucun module pour l'instant.</p>
+    <a href="{% url 'ajouter_module' formation.pk %}" class="btn-or" style="margin-top:1rem;">➕ Créer le premier module</a>
+  </div>
+</div>
+{% endfor %}
+
+{% if inscriptions %}
+<div class="card-cerfop fade-in">
+  <div class="card-header">👥 Candidats inscrits ({{ inscriptions.count }})</div>
+  <div class="card-body" style="padding:0;">
+    <table class="table-cerfop">
+      <thead><tr><th>Candidat</th><th>Inscription</th><th>Progression</th><th>Note</th><th>Attestation</th></tr></thead>
+      <tbody>
+        {% for insc in inscriptions %}
+        <tr>
+          <td><strong>{{ insc.candidat.get_full_name }}</strong><br><small style="color:var(--gris);">{{ insc.candidat.email }}</small></td>
+          <td style="font-size:.82rem;">{{ insc.date_inscription|date:"d/m/Y" }}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="progress-cerfop" style="flex:1;"><div class="progress-bar-cerfop" style="width:{{ insc.progression }}%"></div></div>
+              <span style="font-size:.8rem;font-weight:700;min-width:35px;">{{ insc.progression }}%</span>
+            </div>
+          </td>
+          <td>{{ insc.note_finale|default:"—" }}</td>
+          <td>
+            {% if insc.attestation_accordee %}
+            <span style="color:var(--vert);font-weight:700;font-size:.85rem;">🏅 Accordée</span>
+            {% else %}
+            <a href="{% url 'accorder_attestation' insc.pk %}" class="btn-or" style="padding:5px 12px;font-size:.78rem;" onclick="return confirm('Accorder l\'attestation ?')">🏅 Accorder</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

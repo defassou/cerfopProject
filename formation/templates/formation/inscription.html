@@ -1,0 +1,47 @@
+{% extends 'formation/base.html' %}
+{% load static %}
+{% block title %}Inscription — CERFOP{% endblock %}
+{% block content_public %}
+<div class="auth-page" style="padding:3rem 2rem;align-items:flex-start;">
+  <div class="auth-card fade-in" style="max-width:600px;margin:0 auto;">
+    <div class="auth-logo">
+      <img src="{% static 'formation/img/logo_cnt.png' %}" alt="CNT">
+      <h2>Créer votre compte CERFOP</h2>
+      <p>Plateforme de Formation Parlementaire — CNT Guinée</p>
+    </div>
+    <hr class="divider-or">
+    <form method="post">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Prénom *</label>{{ form.first_name }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Nom *</label>{{ form.last_name }}</div></div>
+      </div>
+      <div class="form-group"><label>Email *</label>{{ form.email }}</div>
+      <div class="form-group"><label>Nom d'utilisateur *</label>{{ form.username }}</div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Mot de passe *</label>{{ form.password1 }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Confirmer *</label>{{ form.password2 }}</div></div>
+      </div>
+      <div class="form-group">
+        <label>Rôle *</label>{{ form.role }}
+        <small style="color:var(--gris);font-size:.78rem;">Les formateurs peuvent créer et gérer des formations.</small>
+      </div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Téléphone</label>{{ form.telephone }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Organisation</label>{{ form.organisation }}</div></div>
+      </div>
+      <div class="form-group"><label>Poste occupé</label>{{ form.poste }}</div>
+      {% if form.errors %}
+      <div class="alert-cerfop alert-error">
+        {% for field in form %}{% for error in field.errors %}<div>{{ error }}</div>{% endfor %}{% endfor %}
+        {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+      </div>
+      {% endif %}
+      <button type="submit" class="btn-or w-100" style="justify-content:center;">✅ Créer mon compte</button>
+    </form>
+    <p style="text-align:center;margin-top:1rem;font-size:.88rem;color:var(--gris);">
+      Déjà inscrit ? <a href="{% url 'connexion' %}" style="color:var(--or);font-weight:700;">Se connecter</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

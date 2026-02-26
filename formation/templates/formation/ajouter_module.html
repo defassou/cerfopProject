@@ -1,0 +1,20 @@
+{% extends 'formation/base.html' %}
+{% block title %}{% if edit %}Modifier{% else %}Ajouter{% endif %} un module{% endblock %}
+{% block content %}
+<div class="page-header fade-in"><h1>📦 {% if edit %}Modifier{% else %}Ajouter{% endif %} un module</h1><p>{{ formation.titre }}</p></div>
+<div class="card-cerfop fade-in" style="max-width:600px;">
+  <div class="card-header">📦 Informations du module</div>
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group"><label>Titre du module *</label>{{ form.titre }}</div>
+      <div class="form-group"><label>Description</label>{{ form.description }}</div>
+      <div class="form-group"><label>Ordre d'affichage</label>{{ form.ordre }}</div>
+      <div style="display:flex;gap:8px;">
+        <button type="submit" class="btn-or">{% if edit %}💾 Sauvegarder{% else %}➕ Ajouter{% endif %}</button>
+        <a href="{% url 'gerer_formation' formation.pk %}" class="btn-bleu">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

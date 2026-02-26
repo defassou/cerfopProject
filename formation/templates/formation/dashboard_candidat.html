@@ -1,0 +1,75 @@
+{% extends 'formation/base.html' %}
+{% block title %}Mon espace — CERFOP{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <h1>Mon espace formation</h1>
+  <p>Bienvenue, {{ user.get_full_name }}. Suivez votre progression et accédez à vos ressources.</p>
+  <div class="header-icon">🎓</div>
+</div>
+
+<div class="row fade-in">
+  <div class="col-4"><div class="stat-card bleu"><div class="stat-icon">📚</div><div class="stat-value">{{ nb_formations }}</div><div class="stat-label">Formations suivies</div></div></div>
+  <div class="col-4"><div class="stat-card vert"><div class="stat-icon">✅</div><div class="stat-value">{{ nb_terminees }}</div><div class="stat-label">Formations terminées</div></div></div>
+  <div class="col-4"><div class="stat-card or"><div class="stat-icon">🏅</div><div class="stat-value">{{ nb_attestations }}</div><div class="stat-label">Attestations obtenues</div></div></div>
+</div>
+
+{% if inscriptions %}
+<div class="card-cerfop fade-in">
+  <div class="card-header">📖 Mes formations en cours</div>
+  <div class="card-body" style="padding:0;">
+    {% for insc in inscriptions %}
+    <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--gris-bord);">
+      <div class="d-flex align-center justify-between" style="margin-bottom:.75rem;">
+        <div>
+          <h5 style="font-family:'Playfair Display',serif;color:var(--bleu-nuit);font-size:1rem;margin-bottom:.2rem;">{{ insc.formation.titre }}</h5>
+          <small style="color:var(--gris);">Formateur : {{ insc.formation.formateur.get_full_name }} • {{ insc.formation.date_debut|date:"d/m/Y" }} → {{ insc.formation.date_fin|date:"d/m/Y" }}</small>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          {% if insc.attestation_accordee %}
+          <a href="{% url 'voir_attestation' insc.pk %}" class="btn-or" style="padding:6px 14px;font-size:.82rem;">🏅 Attestation</a>
+          {% endif %}
+          <a href="{% url 'suivre_formation' insc.formation.pk %}" class="btn-bleu" style="padding:6px 14px;font-size:.82rem;">▶ Continuer</a>
+        </div>
+      </div>
+      <div class="d-flex align-center" style="gap:12px;">
+        <div style="flex:1;">
+          <div class="progress-cerfop">
+            <div class="progress-bar-cerfop" style="width:{{ insc.progression }}%"></div>
+          </div>
+        </div>
+        <span class="progress-label">{{ insc.progression }}%</span>
+        {% if insc.attestation_accordee %}<span style="color:var(--vert);font-weight:700;font-size:.85rem;">🏅 Attestation accordée</span>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="card-cerfop fade-in">
+  <div class="card-body" style="text-align:center;padding:3rem;">
+    <div style="font-size:4rem;margin-bottom:1rem;">🎓</div>
+    <h3 style="font-family:'Playfair Display',serif;color:var(--bleu-nuit);">Commencez votre formation</h3>
+    <p style="color:var(--gris);margin:.75rem 0 1.5rem;">Inscrivez-vous à une formation pour démarrer votre parcours.</p>
+    <a href="{% url 'catalogue_formations' %}" class="btn-or">📚 Voir le catalogue des formations</a>
+  </div>
+</div>
+{% endif %}
+
+{% if notifs %}
+<div class="card-cerfop fade-in">
+  <div class="card-header">🔔 Notifications</div>
+  <div class="card-body" style="padding:0;">
+    {% for n in notifs %}
+    <div class="notif-item {% if not n.lue %}non-lue{% endif %}">
+      <div class="notif-icon">{% if n.type_notif == 'attestation' %}🏅{% elif n.type_notif == 'succes' %}✅{% else %}ℹ️{% endif %}</div>
+      <div>
+        <div class="notif-titre">{{ n.titre }}</div>
+        <div class="notif-message">{{ n.message }}</div>
+        <div class="notif-date">{{ n.date_creation|date:"d/m/Y H:i" }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

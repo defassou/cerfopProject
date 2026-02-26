@@ -1,0 +1,65 @@
+{% extends 'formation/base.html' %}
+{% block title %}{{ formation.titre }} — Suivi{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <h1>📖 {{ formation.titre }}</h1>
+  <p>Formateur : {{ formation.formateur.get_full_name }} · {{ formation.duree_heures }}h</p>
+</div>
+<div class="card-cerfop fade-in" style="margin-bottom:1.5rem;">
+  <div class="card-body">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
+          <span style="font-weight:700;color:var(--bleu-nuit);">Ma progression</span>
+          <span class="progress-label">{{ inscription.progression }}%</span>
+        </div>
+        <div class="progress-cerfop" style="height:14px;">
+          <div class="progress-bar-cerfop" style="width:{{ inscription.progression }}%"></div>
+        </div>
+      </div>
+      {% if inscription.attestation_accordee %}
+      <a href="{% url 'voir_attestation' inscription.pk %}" class="btn-or pulse-or">🏅 Mon attestation</a>
+      {% endif %}
+    </div>
+    {% if inscription.get_moyenne %}
+    <p style="margin-top:.75rem;font-size:.88rem;color:var(--gris);">Moyenne aux quiz : <strong style="color:var(--bleu-marine);">{{ inscription.get_moyenne }}%</strong></p>
+    {% endif %}
+  </div>
+</div>
+
+{% for module in modules %}
+<div class="module-item fade-in">
+  <div class="module-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display=='none'?'block':'none'">
+    <h6>📦 Module {{ module.ordre }} : {{ module.titre }}</h6>
+    <span style="font-size:.8rem;opacity:.8;">{{ module.cours.count }} cours · {{ module.quiz.count }} quiz ▾</span>
+  </div>
+  <div class="module-body">
+    {% if module.description %}<p style="font-size:.85rem;color:var(--gris);margin-bottom:.75rem;">{{ module.description }}</p>{% endif %}
+    {% for cours in module.cours.all %}
+    <a href="{% url 'voir_cours' cours.pk %}" class="cours-item {% if cours.pk in cours_termines_ids %}termine{% endif %}">
+      <span class="cours-icon">{{ cours.get_icon }}</span>
+      <div style="flex:1;">
+        <div class="cours-titre">{{ cours.titre }}</div>
+        <div class="cours-meta">{{ cours.get_type_fichier_display }}{% if cours.duree_minutes %} · {{ cours.duree_minutes }} min{% endif %}</div>
+      </div>
+      {% if cours.pk in cours_termines_ids %}
+      <span class="cours-check">✅</span>
+      {% else %}
+      <span style="color:var(--bleu-ciel);font-size:.82rem;">▶ Accéder</span>
+      {% endif %}
+    </a>
+    {% endfor %}
+    {% for quiz in module.quiz.all %}
+    <a href="{% url 'passer_quiz' quiz.pk %}" class="cours-item" style="background:rgba(74,124,201,.04);border-color:rgba(74,124,201,.2);">
+      <span class="cours-icon">📝</span>
+      <div style="flex:1;">
+        <div class="cours-titre">Quiz : {{ quiz.titre }}</div>
+        <div class="cours-meta">{{ quiz.questions.count }} questions · {{ quiz.duree_minutes }} min · {{ quiz.nb_tentatives }} tentatives</div>
+      </div>
+      <span style="color:var(--bleu-ciel);font-size:.82rem;">▶ Passer</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

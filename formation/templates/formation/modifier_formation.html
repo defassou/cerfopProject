@@ -1,0 +1,31 @@
+{% extends 'formation/base.html' %}
+{% block title %}Modifier — {{ formation.titre }}{% endblock %}
+{% block content %}
+<div class="page-header fade-in"><h1>✏️ Modifier la formation</h1><p>{{ formation.titre }}</p></div>
+<div class="card-cerfop fade-in">
+  <div class="card-header">📋 Modifier les informations</div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group"><label>Titre</label>{{ form.titre }}</div>
+      <div class="form-group"><label>Description</label>{{ form.description }}</div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Date de début</label>{{ form.date_debut }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Date de fin</label>{{ form.date_fin }}</div></div>
+      </div>
+      <div class="row">
+        <div class="col-6"><div class="form-group"><label>Durée (heures)</label>{{ form.duree_heures }}</div></div>
+        <div class="col-6"><div class="form-group"><label>Note minimale (%)</label>{{ form.note_passage }}</div></div>
+      </div>
+      <div class="form-group"><label>Statut</label>{{ form.statut }}</div>
+      <div class="form-group"><label>Objectifs</label>{{ form.objectifs }}</div>
+      <div class="form-group"><label>Public cible</label>{{ form.public_cible }}</div>
+      <div class="form-group"><label>Image</label>{{ form.image }}</div>
+      <div style="display:flex;gap:8px;">
+        <button type="submit" class="btn-or">💾 Sauvegarder</button>
+        <a href="{% url 'gerer_formation' formation.pk %}" class="btn-bleu">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'formation/base.html' %}
+{% block title %}Tableau de bord — Formateur{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <h1>Tableau de bord Formateur</h1>
+  <p>Bienvenue, {{ user.get_full_name }}. Gérez vos formations et suivez vos candidats.</p>
+  <div class="header-icon">🎓</div>
+</div>
+
+<!-- STATS -->
+<div class="row fade-in">
+  <div class="col-4">
+    <div class="stat-card or">
+      <div class="stat-icon">📋</div>
+      <div class="stat-value">{{ total_formations }}</div>
+      <div class="stat-label">Formations créées</div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="stat-card bleu">
+      <div class="stat-icon">✅</div>
+      <div class="stat-value">{{ formations_publiees }}</div>
+      <div class="stat-label">Formations publiées</div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="stat-card vert">
+      <div class="stat-icon">👥</div>
+      <div class="stat-value">{{ total_inscrits }}</div>
+      <div class="stat-label">Candidats inscrits</div>
+    </div>
+  </div>
+</div>
+
+<!-- FORMATIONS RECENTES -->
+<div class="card-cerfop fade-in">
+  <div class="card-header">
+    📚 Mes formations récentes
+    <a href="{% url 'creer_formation' %}" class="btn-or" style="margin-left:auto;padding:6px 16px;font-size:.82rem;">➕ Nouvelle</a>
+  </div>
+  <div class="card-body" style="padding:0;">
+    {% if formations %}
+    <table class="table-cerfop">
+      <thead><tr><th>Formation</th><th>Statut</th><th>Inscrits</th><th>Période</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for f in formations %}
+        <tr>
+          <td><strong>{{ f.titre }}</strong><br><small style="color:var(--gris);">{{ f.nb_modules }} module(s) • {{ f.nb_cours }} cours</small></td>
+          <td><span class="badge-statut badge-{{ f.statut }}">{{ f.get_statut_display }}</span></td>
+          <td><strong>{{ f.nb_inscrits }}</strong></td>
+          <td style="font-size:.82rem;">{{ f.date_debut|date:"d/m/Y" }} → {{ f.date_fin|date:"d/m/Y" }}</td>
+          <td>
+            <a href="{% url 'gerer_formation' f.pk %}" class="btn-bleu btn-sm-icon">⚙️ Gérer</a>
+            <a href="{% url 'suivi_candidats' f.pk %}" class="btn-outline-or btn-sm-icon" style="margin-left:4px;">👥 Suivi</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="padding:2rem;text-align:center;color:var(--gris);">
+      <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
+      <p>Aucune formation créée pour le moment.</p>
+      <a href="{% url 'creer_formation' %}" class="btn-or" style="margin-top:1rem;">➕ Créer ma première formation</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+{% if notifs %}
+<div class="card-cerfop fade-in">
+  <div class="card-header">🔔 Notifications récentes</div>
+  <div class="card-body" style="padding:0;">
+    {% for n in notifs %}
+    <div class="notif-item non-lue">
+      <div class="notif-icon">{% if n.type_notif == 'succes' %}🏅{% elif n.type_notif == 'alerte' %}⚠️{% else %}ℹ️{% endif %}</div>
+      <div>
+        <div class="notif-titre">{{ n.titre }}</div>
+        <div class="notif-message">{{ n.message }}</div>
+        <div class="notif-date">{{ n.date_creation|date:"d/m/Y H:i" }}</div>
+      </div>
+    </div>
+    {% endfor %}
+    <div style="padding:.75rem 1.5rem;text-align:right;">
+      <a href="{% url 'mes_notifications' %}" style="color:var(--or);font-size:.85rem;font-weight:600;">Voir toutes les notifications →</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

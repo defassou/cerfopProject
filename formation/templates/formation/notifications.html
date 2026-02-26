@@ -1,0 +1,23 @@
+{% extends 'formation/base.html' %}
+{% block title %}Notifications — CERFOP{% endblock %}
+{% block content %}
+<div class="page-header fade-in"><h1>🔔 Mes notifications</h1><p>Toutes vos notifications CERFOP</p></div>
+<div class="card-cerfop fade-in">
+  <div class="card-header">🔔 Notifications ({{ notifs.count }})</div>
+  <div class="card-body" style="padding:0;">
+    {% for n in notifs %}
+    <div class="notif-item {% if not n.lue %}non-lue{% endif %}">
+      <div class="notif-icon">{% if n.type_notif == 'attestation' %}🏅{% elif n.type_notif == 'succes' %}✅{% elif n.type_notif == 'alerte' %}⚠️{% else %}ℹ️{% endif %}</div>
+      <div style="flex:1;">
+        <div class="notif-titre">{{ n.titre }}</div>
+        <div class="notif-message">{{ n.message }}</div>
+        <div class="notif-date">{{ n.date_creation|date:"d/m/Y H:i" }}</div>
+      </div>
+      {% if not n.lue %}<span style="width:8px;height:8px;background:var(--or);border-radius:50%;align-self:center;"></span>{% endif %}
+    </div>
+    {% empty %}
+    <div style="padding:2.5rem;text-align:center;color:var(--gris);"><div style="font-size:3rem;">🔕</div><p>Aucune notification.</p></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'formation/base.html' %}
+{% block title %}Résultats — {{ tentative.quiz.titre }}{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+  <h1>📊 Résultats du quiz</h1>
+  <p>{{ tentative.quiz.titre }} · {{ tentative.quiz.module.formation.titre }}</p>
+</div>
+<div class="card-cerfop fade-in" style="margin-bottom:1.5rem;">
+  <div class="card-body" style="text-align:center;padding:2rem;">
+    {% if tentative.note >= tentative.quiz.module.formation.note_passage %}
+    <div style="font-size:4rem;margin-bottom:.5rem;">🎉</div>
+    <h2 style="font-family:'Playfair Display',serif;color:var(--vert);">Félicitations !</h2>
+    {% else %}
+    <div style="font-size:4rem;margin-bottom:.5rem;">📖</div>
+    <h2 style="font-family:'Playfair Display',serif;color:var(--bleu-marine);">Continuez vos efforts</h2>
+    {% endif %}
+    <div style="font-size:3rem;font-family:'Playfair Display',serif;font-weight:700;color:var(--or);margin:.75rem 0;">{{ tentative.note }}%</div>
+    <p style="color:var(--gris);">{{ tentative.reponses.filter.count }} / {{ tentative.quiz.questions.count }} bonnes réponses</p>
+    <a href="{% url 'suivre_formation' tentative.inscription.formation.pk %}" class="btn-bleu" style="margin-top:1rem;">← Retour à la formation</a>
+  </div>
+</div>
+{% for reponse in reponses %}
+<div class="quiz-question-card fade-in" style="border-left:4px solid {% if reponse.est_correct %}var(--vert-clair){% else %}var(--rouge){% endif %};">
+  <div class="question-number">Question {{ forloop.counter }} — {% if reponse.est_correct %}✅ Correct{% else %}❌ Incorrect{% endif %}</div>
+  <div class="question-texte">{{ reponse.question.texte }}</div>
+  {% if reponse.choix_selectionne %}
+  <p style="font-size:.88rem;"><strong>Votre réponse :</strong> {{ reponse.choix_selectionne.texte }}</p>
+  {% if not reponse.est_correct %}
+  {% for choix in reponse.question.choix.all %}{% if choix.est_correct %}
+  <p style="font-size:.88rem;color:var(--vert);"><strong>Bonne réponse :</strong> {{ choix.texte }}</p>
+  {% endif %}{% endfor %}
+  {% endif %}
+  {% endif %}
+</div>
+{% endfor %}
+{% endblock %}
