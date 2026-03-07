@@ -1,33 +1,47 @@
-{% extends 'formation/base.html' %}
 {% load static %}
-{% block title %}Connexion — CERFOP{% endblock %}
-{% block content_public %}
-<div class="auth-page">
-  <div class="auth-card fade-in">
-    <div class="auth-logo">
-      <img src="{% static 'formation/img/logo_cnt.png' %}" alt="CNT">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion — DRH CNT Guinée</title>
+  <link rel="stylesheet" href="{% static 'prlg/css/main.css' %}">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="{% static 'prlg/img/cnt_logo.png' %}" alt="CNT" onerror="this.outerHTML='<div style=width:90px;height:90px;border-radius:50%;background:#cc0000;display:flex;align-items:center;justify-content:center;margin:0 auto;border:3px solid #d4a017><span style=color:white;font-size:24px;font-weight:bold>CNT</span></div>'">
       <h2>Conseil National de la Transition</h2>
-      <p>Centre d'Études, de Recherche et de Formation Parlementaire</p>
+      <p>République de Guinée — Plateforme de formation en ligne</p>
     </div>
-    <hr class="divider-or">
-    <h3 style="font-family:'Playfair Display',serif;color:var(--bleu-nuit);margin-bottom:1.5rem;text-align:center;font-size:1.3rem;">Connexion à votre espace</h3>
-    {% for msg in messages %}<div class="alert-cerfop alert-{{ msg.tags }}">{{ msg }}</div>{% endfor %}
+
+    {% if form.errors %}
+    <div class="alert alert-error">❌ Identifiants incorrects. Veuillez réessayer.</div>
+    {% endif %}
+
     <form method="post">
       {% csrf_token %}
       <div class="form-group">
-        <label>Nom d'utilisateur</label>
-        {{ form.username }}
+        <label for="id_username">Nom d'utilisateur</label>
+        <input type="text" id="id_username" name="username" placeholder="Entrez votre identifiant" required>
       </div>
       <div class="form-group">
-        <label>Mot de passe</label>
-        {{ form.password }}
+        <label for="id_password">Mot de passe</label>
+        <input type="password" id="id_password" name="password" placeholder="••••••••" required>
       </div>
-      {% if form.errors %}<div class="alert-cerfop alert-error">Identifiants incorrects. Veuillez réessayer.</div>{% endif %}
-      <button type="submit" class="btn-or w-100" style="justify-content:center;margin-top:.5rem;">🔐 Se connecter</button>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;padding:12px">
+        🔐 Se connecter
+      </button>
+      <input type="hidden" name="next" value="{{ next }}">
     </form>
-    <p style="text-align:center;margin-top:1.25rem;font-size:.88rem;color:var(--gris);">
-      Pas encore de compte ? <a href="{% url 'inscription' %}" style="color:var(--or);font-weight:700;">Créer un compte</a>
+
+    <p style="text-align:center;color:#555;margin-top:20px;font-size:12px">
+      Centre d'études de recherche et de la formation parlementaire  CNT Guinée<br>
+      <span style="color:#666">Accès réservé aux membres autorisés</span>
     </p>
   </div>
 </div>
-{% endblock %}
+<script src="{% static 'prlg/js/main.js' %}"></script>
+</body>
+</html>
