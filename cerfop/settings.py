@@ -1,13 +1,11 @@
 from pathlib import Path
 import os
-from decouple import config
-import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 SECRET_KEY = 'django-insecure-cerfop-cnt-change-this-in-production-2024'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
-DATABASE_URL=config('DATABASE_URL')
+
+#DATABASE_URL=config('DATABASE_URL')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -16,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'formation',
 ]
 
@@ -53,16 +52,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cerfop.wsgi.application'
 
 
-DATABASES = {
-    'default': dj_database_url.parse(config('DATABASE_URL'))
-}
+# SQLite par défaut ; PostgreSQL si DB_NAME est défini
+if os.environ.get("DB_NAME"):
+    DATABASES = {"default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ["DB_NAME"], "USER": os.environ.get("DB_USER", ""),
+        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+        "HOST": os.environ.get("DB_HOST", "localhost"), "PORT": os.environ.get("DB_PORT", "5432"),
+    }}
+else:
+    DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 10}},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
 
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Africa/Conakry'
